@@ -1,7 +1,11 @@
 package ma.enset.web;
 
+import ma.enset.dto.BankAccountRequestDTO;
+import ma.enset.dto.BankAccountResponseDTO;
 import ma.enset.entities.BankAccount;
+import ma.enset.mappers.AccountMapper;
 import ma.enset.repositories.BankAccountRepository;
+import ma.enset.service.AccountService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -12,6 +16,8 @@ import java.util.UUID;
 @RequestMapping("/api")
 public class AccountRestController {
     private final BankAccountRepository bankAccountRepository;
+    private AccountService accountService;
+    private AccountMapper accountMapper;
 
     public AccountRestController(BankAccountRepository bankAccountRepository){
         this.bankAccountRepository = bankAccountRepository;
@@ -29,9 +35,8 @@ public class AccountRestController {
     }
 
     @PostMapping("/bankAccounts")
-    public BankAccount save(@RequestBody BankAccount bankAccount){
-        if (bankAccount.getId() == null) bankAccount.setId(UUID.randomUUID().toString());
-        return bankAccountRepository.save(bankAccount);
+    public BankAccountResponseDTO save(@RequestBody BankAccountRequestDTO requestDTO){
+        return accountService.addAccount(requestDTO);
     }
 
     @PutMapping("/bankAccounts/{id}")
